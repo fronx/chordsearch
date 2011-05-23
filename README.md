@@ -6,13 +6,25 @@
 - [http://chordsearch.heroku.com/guitar/e5D7.json](http://chordsearch.heroku.com/guitar/e5D7.json)
 - [http://chordsearch.heroku.com/guitar/e5D7](http://chordsearch.heroku.com/guitar/e5D7) (for html)
 
-## response
+## html output
+chords are displayed as pictures thanks to [theophani](https://github.com/theophani)'s [styling](https://github.com/theophani/Flashchords/blob/master/fc/css/style.css).
+
+## json response
     [
       {
         "instrument": "guitar",
-        "name"      : "A major",
-        "url"       : "http://chordsearch.heroku.com/guitar/e5h5g6D7A7E5--A_major",
-        "tones"     : { "e": 5, "h": 5, "g": 6, "D": 7, "A": 7, "E": 5 }
+        "chord"     : "A",
+        "modifier"  : "major",
+        "url_html"  : "http://chordsearch.heroku.com/guitar/e5h5g6D7A7E5--A_major",
+        "url_json"  : "http://chordsearch.heroku.com/guitar/e5h5g6D7A7E5--A_major.json",
+        "tones"     : {
+          "e": 5,
+          "b": 5,
+          "g": 6,
+          "D": 7,
+          "A": 7,
+          "E": 5
+        }
       },
       {
         // other chord that matches the search request
@@ -29,9 +41,6 @@
 ## audio chord recognizer
     in:  audio recording
     out: chord as json
-
-## pictures
-- display chords as nice images
 
 ## audio output
 - record string samples
