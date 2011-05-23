@@ -3,6 +3,9 @@ require 'mongo'
 require 'haml'
 require 'json'
 
+set :app_file, __FILE__
+enable :static
+
 class GuitarChord
   def strings
     ['E', 'A', 'D', 'g', 'b', 'e'].reverse
@@ -56,11 +59,14 @@ module ChordDB
     @db ||= connect
   end
 
-  def self.find_chords(q, instrument)
+  def self.query_from_param(q)
     query = {} if q == 'all'
     query ||= Hash[
       q.to_s.split('--').first.scan(/([a-zA-Z])(\d+)/) # [['e', '5'], ['b', '6']]
     ]
+  end
+
+  def self.find_chords(query, instrument)
     db[instrument].find(query).map { |result| GuitarChord.new(result) }
   end
 
@@ -76,11 +82,13 @@ get '/' do
 end
 
 get '/guitar/:q.json' do
-  ChordDB.find_chords(params['q'], 'guitar').
+  query = ChordDB.query_from_param(params['q'])
+  ChordDB.find_chords(query, 'guitar').
     to_json
 end
 
 get '/guitar/:q' do
-  @chords = ChordDB.find_chords(params['q'], 'guitar')
+  @query = ChordDB.query_from_param(params['q'])
+  @chords = ChordDB.find_chords(@query, 'guitar')
   haml :chords
 end
