@@ -27,7 +27,7 @@
 ## data storage
 - mongodb?
 - bucket: instrument
-  - record: chord
+  - record: chord `{ "name": "A major", "e": "5", "b": "5", "g": "6", "D": "7", "A": "7", "E": "5" }`
 - indexes
   - sets of chords by string + fret
   - search via multiple set intersection

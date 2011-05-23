@@ -1,0 +1,7 @@
+- @chords.each do |chord|
+  %h2= chord.name
+  .chord
+    %dl
+      - chord.data.each do |string, fret|
+        %dt= string
+        %dd= fret
