@@ -11,7 +11,7 @@
       {
         "instrument": "guitar",
         "name"      : "A major",
-        "url"       : "http://chordsearch.heroku.com/guitar/A-major/e5h5g6D7A7E5",
+        "url"       : "http://chordsearch.heroku.com/guitar/e5h5g6D7A7E5--A_major",
         "tones"     : { "e": 5, "h": 5, "g": 6, "D": 7, "A": 7, "E": 5 }
       },
       {
