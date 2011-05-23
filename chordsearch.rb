@@ -3,8 +3,6 @@ require 'mongo'
 require 'haml'
 require 'json'
 
-require 'rest_client'
-
 class GuitarChord
   def strings
     ['E', 'A', 'D', 'g', 'b', 'e'].reverse
@@ -75,30 +73,6 @@ ChordDB.connect
 
 get '/' do
   haml :index
-end
-
-get '/guitar/import' do
-  errors = []
-  %w(C D Db E Eb F G Gb A Ab B Bb).each do |chord|
-    response = RestClient.get("http://pargitaru.co.cc/api/?request=chords&chord=#{chord}&type=json", :accept => :json).to_str
-    begin
-      JSON.parse(response)['chords'].each do |data|
-        ChordDB.insert('guitar', {
-          'chord' => data['chord'],
-          'modifier' => data['modf'],
-          'e' => data['e2'],
-          'b' => data['b'],
-          'g' => data['g'],
-          'D' => data['d'],
-          'A' => data['a'],
-          'E' => data['e']
-        })
-      end
-    # rescue => e
-    #   errors << e
-    end
-  end
-  errors.map(&:inspect).inspect
 end
 
 get '/guitar/:q.json' do
