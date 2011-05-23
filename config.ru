@@ -1,2 +1,2 @@
-require 'chordsearch'
+require "chordsearch"
 run Sinatra::Application
