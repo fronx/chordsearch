@@ -13,7 +13,8 @@
     #main
       - @chords.each do |chord|
         .chord
-          %h1= chord.name
+          %h1
+            %a{href: chord.url_html}= chord.name
           - chord.data.each do |string, fret|
             .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
               .fret{class: "fr_#{fret}"}
