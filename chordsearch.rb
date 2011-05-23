@@ -3,20 +3,27 @@ require 'mongo'
 require 'haml'
 require 'json'
 
+require 'rest_client'
+
 class GuitarChord
   def strings
     ['E', 'A', 'D', 'g', 'b', 'e'].reverse
   end
 
-  attr_reader :name, :data
+  attr_reader :chord, :modifier, :data
 
   def initialize(raw)
-    @name = raw['name']
+    @chord = raw['chord']
+    @modifier = raw['modifier']
     @data = Hash[strings.map { |s| [s, raw[s] || '0'] }]
   end
 
-  def url
+  def url_html
     "http://chordsearch.heroku.com/guitar/#{key}"
+  end
+
+  def url_json
+    "#{url_html}.json"
   end
 
   def key
@@ -24,11 +31,17 @@ class GuitarChord
       '--' << name.gsub(/\s+/, '_')
   end
 
+  def name
+    [chord, modifier].join(' ')
+  end
+
   def to_json(*args)
     {
       "instrument" => "guitar",
-      "name"       => name,
-      "url"        => url,
+      "chord"      => chord,
+      "modifier"   => modifier,
+      "url_html"   => url_html,
+      "url_json"   => url_json,
       "tones"      => data
     }.to_json
   end
@@ -46,17 +59,46 @@ module ChordDB
   end
 
   def self.find_chords(q, instrument)
-    query = Hash[
+    query = {} if q == 'all'
+    query ||= Hash[
       q.to_s.split('--').first.scan(/([a-zA-Z])(\d+)/) # [['e', '5'], ['b', '6']]
     ]
     db[instrument].find(query).map { |result| GuitarChord.new(result) }
+  end
+
+  def self.insert(instrument, data)
+    db[instrument].insert(data)
   end
 end
 
 ChordDB.connect
 
 get '/' do
-  "fuck yeah chord search!"
+  haml :index
+end
+
+get '/guitar/import' do
+  errors = []
+  %w(C D Db E Eb F G Gb A Ab B Bb).each do |chord|
+    response = RestClient.get("http://pargitaru.co.cc/api/?request=chords&chord=#{chord}&type=json", :accept => :json).to_str
+    begin
+      JSON.parse(response)['chords'].each do |data|
+        ChordDB.insert('guitar', {
+          'chord' => data['chord'],
+          'modifier' => data['modf'],
+          'e' => data['e2'],
+          'b' => data['b'],
+          'g' => data['g'],
+          'D' => data['d'],
+          'A' => data['a'],
+          'E' => data['e']
+        })
+      end
+    # rescue => e
+    #   errors << e
+    end
+  end
+  errors.map(&:inspect).inspect
 end
 
 get '/guitar/:q.json' do
