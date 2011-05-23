@@ -206,9 +206,7 @@ button {  width: auto; overflow: visible; }
  */
 
 body { background-color: #eee; }
-.header { background-color: #333; color: white; font-size: 22px; padding: 0.5em 5%; }
-.chord { width: 90%; margin: auto; min-height: 243px; margin-bottom: 30px;}
-
+.flashchord { display:block; width: 397px; margin: auto; min-height: 243px; }
 h1 { background-color: #eee; line-height: 2em; font-size: 40px; }
 h1 a { text-decoration: none; }
 .string { height: 25px; border-top: solid 3px #888; position: relative; background-image: url(fret.gif); border-left: 6px solid #777; }

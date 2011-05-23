@@ -1,20 +1,36 @@
-%h1 fuck yeah chord search!
+!!! html5
+%head
+  %meta{charset:"utf-8"}
+  %meta{'http-equiv' => "X-UA-Compatible", 'content' => "IE=edge,chrome=1"}
+  %title Chord Search
+  %meta{name:"viewport", content:"width=device-width; initial-scale=1.0; maximum-scale=1.0;"}
+  %link{rel:"stylesheet", href:"/css/flashchords.css?v=1"}
+  %link{rel:"stylesheet", href:"/css/style.css?v=1"}
 
-%p
-  find chords that include
-%ul
-  %li
-    the e (high) string and E (low) string pressed down at the 5th fret
-    %ul
-      %li
-        %a{href: '/guitar/e5E5'}as visualized chords
-      %li
-        %a{href: '/guitar/e5E5.json'}as json
-  %li
-    the g string and D string pressed down at the 2nd fret
-    %ul
-      %li
-        %a{href: '/guitar/g2D2'}as visualized chords
-      %li
-        %a{href: '/guitar/g2D2.json'}as json
+%body
+  .container
+    #main
+      %h1 fuck yeah chord search!
 
+      %p
+        find chords that include
+      %ul
+        %li
+          the e (high) string and E (low) string pressed down at the 5th fret
+          %ul
+            %li
+              %a{href: '/guitar/e5E5'}as visualized chords
+            %li
+              %a{href: '/guitar/e5E5.json'}as json
+        %li
+          the g string and D string pressed down at the 2nd fret
+          %ul
+            %li
+              %a{href: '/guitar/g2D2'}as visualized chords
+            %li
+              %a{href: '/guitar/g2D2.json'}as json
+
+      .footer.small
+        .info
+          %p this is a pet project by #{'<a href="http://fronx.wurmus.de/">fronx</a>'}.
+          %p you should fork his #{'<a href="https://github.com/fronx/chordsearch">code</a>'}.

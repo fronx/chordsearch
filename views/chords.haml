@@ -5,6 +5,7 @@
   %title Chord Search
   %meta{name:"viewport", content:"width=device-width; initial-scale=1.0; maximum-scale=1.0;"}
   %link{rel:"stylesheet", href:"/css/flashchords.css?v=1"}
+  %link{rel:"stylesheet", href:"/css/style.css?v=1"}
 
 %body
   .container
@@ -19,3 +20,8 @@
             .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
               .fret{class: "fr_#{fret}"}
                 %span.finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+
+  .footer.wide
+    .info
+      %p this is a pet project by #{'<a href="http://fronx.wurmus.de/">fronx</a>'}.
+      %p you should fork his #{'<a href="https://github.com/fronx/chordsearch">code</a>'}.

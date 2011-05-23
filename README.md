@@ -38,7 +38,10 @@ chords are displayed as pictures thanks to [theophani](https://github.com/theoph
 
 # future extensions
 
-## audio chord recognizer
+## visual input
+- search chords by clicking on a graphical fretboard
+
+## audio input
     in:  audio recording
     out: chord as json
 
