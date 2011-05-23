@@ -47,7 +47,7 @@ module ChordDB
 
   def self.find_chords(q, instrument)
     query = Hash[
-      q.to_s.scan(/([a-zA-Z])(\d+)/) # [['e', '5'], ['b', '6']]
+      q.to_s.split('--').first.scan(/([a-zA-Z])(\d+)/) # [['e', '5'], ['b', '6']]
     ]
     db[instrument].find(query).map { |result| GuitarChord.new(result) }
   end
@@ -59,12 +59,12 @@ get '/' do
   "fuck yeah chord search!"
 end
 
-get '/guitar/search/:q.json' do
+get '/guitar/:q.json' do
   ChordDB.find_chords(params['q'], 'guitar').
     to_json
 end
 
-get '/guitar/search/:q' do
+get '/guitar/:q' do
   @chords = ChordDB.find_chords(params['q'], 'guitar')
   haml :chords
 end
