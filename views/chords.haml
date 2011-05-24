@@ -1,0 +1,31 @@
+!!! html5
+%head
+  %meta{charset:"utf-8"}
+  %meta{'http-equiv' => "X-UA-Compatible", 'content' => "IE=edge,chrome=1"}
+  %title Chord Search
+  %meta{name:"viewport", content:"width=device-width; initial-scale=1.0; maximum-scale=1.0;"}
+  %link{rel:"stylesheet", href:"/css/flashchords.css?v=1"}
+  %link{rel:"stylesheet", href:"/css/style.css?v=1"}
+
+%body
+  .container
+    .header
+      %a{href:'/'}= "chord search"
+      &nbsp;
+      = @query.inspect
+    #main
+      - @chords.each do |chord|
+        .chord
+          %h1
+            %a{href: chord.url_html}= chord.name
+          - chord.data.each do |string, fret|
+            .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
+              - ('1'..'12').each do |this_fret|
+                .fret{class: "fr_#{this_fret}"}
+                  - if fret == this_fret
+                    .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+
+  .footer.wide
+    .info
+      %p this is a pet project by #{'<a href="http://fronx.wurmus.de/">fronx</a>'}.
+      %p you should fork his #{'<a href="https://github.com/fronx/chordsearch">code</a>'}.
