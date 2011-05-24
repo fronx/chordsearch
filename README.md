@@ -36,7 +36,7 @@ chords are displayed as pictures thanks to [theophani](https://github.com/theoph
 - one collection per instrument
 - chords are stored as `{ "name": "A major", "e": "5", "b": "5", "g": "6", "D": "7", "A": "7", "E": "5" }`
 
-# future extensions
+# in the works
 
 ## visual input
 - search chords by clicking on a graphical fretboard
