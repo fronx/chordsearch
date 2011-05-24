@@ -10,9 +10,21 @@
 %body
   .container
     .header
-      %a{href:'/'}= "chord search"
-      &nbsp;
-      = @query.inspect
+      .search
+        .chord
+          %h1
+            %a{href:'/'}= "chord search"
+          - @search_chord.data.each do |string, fret|
+            .string{class:"s_#{string}"}
+              - ('1'..'12').each do |this_fret|
+                .fret{class: "fr_#{this_fret}"}
+                  - if @query[string] == this_fret
+                    .finger
+                      %a{href:@search_chord.class.new(@query.reject { |k,v| k == string }).search_key, title: 'remove'}= '&nbsp;&nbsp;'
+                  - else
+                    .finger.hidden
+                      %a{href:@search_chord.class.new(@query.merge(string => this_fret)).search_key, title:'add'}= '&nbsp;&nbsp;'
+
     #main
       - @chords.each do |chord|
         .chord

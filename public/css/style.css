@@ -24,6 +24,22 @@ a, a:hover, a:link, a:visited {
 .chord { margin: auto; min-height: 243px; }
 .chord h1, .chord h1 a { color: #333; font-size: 22px; }
 
+.search .chord { min-height: auto;}
+.search .finger {
+  background-color: #00b000;
+}
+.search .finger.hidden {
+  background-color: #aaa;
+  opacity: 0.1;
+}
+.search .finger:hover {
+  opacity: 0.7;
+}
+.search .finger.hidden:hover {
+  background-color: #00b000;
+  opacity: 0.7;
+}
+
 .future {
   font-size: 14px;
   color: #777;
@@ -36,12 +52,15 @@ a, a:hover, a:link, a:visited {
 .future h2 { font-size: 18px; margin-bottom: 6px;}
 .future h3 { font-size: 1.1em; }
 
-.header a, .footer a { color: #fa0; }
+.header a, .header h1 a, .footer a { color: #fa0; }
 
-.header a:hover, .footer a:hover {
+.header a:hover, .header h1 a:hover, .footer a:hover {
   color: white;
   text-shadow: #fff 0 0 30px;
 }
+
+.header h1 { background-color: transparent; margin-bottom: 10px;}
+.header .string { background-color: #555;}
 
 .footer {
   background-color: #444;

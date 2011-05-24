@@ -7,15 +7,23 @@ set :app_file, __FILE__
 enable :static
 
 class GuitarChord
+  def self.dummy
+    new(
+      'chord' => 'A', 'modifier' => 'major',
+      'b' => '2', 'g' => '2', 'D' => '2'
+    )
+  end
+
   def strings
     ['E', 'A', 'D', 'g', 'b', 'e'].reverse
   end
 
   attr_reader :chord, :modifier, :data
 
-  def initialize(raw)
+  def initialize(raw = {})
     @chord = raw['chord']
     @modifier = raw['modifier']
+    @raw = raw
     @data = Hash[strings.map { |s| [s, raw[s] || '0'] }]
   end
 
@@ -30,6 +38,10 @@ class GuitarChord
   def key
     strings.map { |s| [s, data[s]] }.flatten.join <<
       '--' << name.gsub(/\s+/, '_')
+  end
+
+  def search_key
+    @raw.to_a.flatten.join
   end
 
   def name
@@ -67,15 +79,15 @@ module ChordDB
   end
 
   def self.find_chords(query, instrument)
-    db[instrument].find(query).map { |result| GuitarChord.new(result) }
+    ENV['NOINTERNET'] ?
+      [GuitarChord.dummy] :
+      db[instrument].find(query).map { |result| GuitarChord.new(result) }
   end
 
   def self.insert(instrument, data)
     db[instrument].insert(data)
   end
 end
-
-ChordDB.connect
 
 get '/' do
   haml :index
@@ -89,6 +101,7 @@ end
 
 get '/guitar/:q' do
   @query = ChordDB.query_from_param(params['q'])
+  @search_chord = GuitarChord.new
   @chords = ChordDB.find_chords(@query, 'guitar')
   haml :chords
 end
