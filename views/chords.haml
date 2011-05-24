@@ -10,6 +10,8 @@
 %body
   .container
     .header
+      %a{href:'/'}= "chord search"
+      &nbsp;
       = @query.inspect
     #main
       - @chords.each do |chord|
