@@ -113,6 +113,7 @@ get %r{^/(\w+)$} do |instrument|
 end
 
 get %r{^/(\w+)/$} do |instrument|
+  redirect '/' unless ChordDB[instrument]
   @query = {}
   @search_chord = ChordDB[instrument].new
   @chords = []
