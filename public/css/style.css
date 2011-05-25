@@ -5,26 +5,17 @@ html, body {
   line-height: 1.4em;
 }
 
-#main {
-  width: 90%;
-  margin: 0 auto;
-}
+#main { width: 90%; margin: 0 auto; }
 
-p {
-  padding: 0 0 0.3em 0;
-  margin: 0;
-}
+p { padding: 0 0 0.3em 0; margin: 0; }
 
-a, a:hover, a:link, a:visited {
-  text-decoration: none;
-}
+a, a:hover, a:link, a:visited { text-decoration: none; }
 
 .header { background-color: #333; color: white; font-size: 18px; padding: 0.5em 5%; margin-bottom: 30px; }
 
 .chord { margin: auto; min-height: 243px; }
 .chord h1, .chord h1 a { color: #333; font-size: 22px; }
 
-.search .chord { min-height: auto;}
 .search .finger {
   background-color: #00b000;
 }
