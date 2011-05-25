@@ -274,9 +274,9 @@ get '/ukulele/import' do
       'chord' => data[0],
       'modifier' => data[1],
       'g' => data[2].chars.to_a[0],
-      'd' => data[2].chars.to_a[1],
-      'a' => data[2].chars.to_a[2],
-      'e' => data[2].chars.to_a[3],
+      'c' => data[2].chars.to_a[1],
+      'e' => data[2].chars.to_a[2],
+      'a' => data[2].chars.to_a[3],
     })
   end
   "done"
