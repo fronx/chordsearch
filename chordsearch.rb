@@ -149,6 +149,75 @@ get '/' do
   haml :index
 end
 
+get '/mandolin/import' do
+  # source: https://github.com/gudmundurh/progressions/blob/master/chords/mandolindb.js
+  [
+    ["C", "major", "0230"],
+    ["C", "major", "0233"],
+    ["C#/Db", "major", "1341"],
+    ["D", "major", "2002"],
+    ["D#/Eb", "major", "0113"],
+    ["E", "major", "4224"],
+    ["F", "major", "5301"],
+    ["F#/Gb", "major", "6412"],
+    ["G", "major", "0023"],
+    ["G#/Ab", "major", "1134"],
+    ["A", "major", "6200"],
+    ["A#/Bb", "major", "3011"],
+    ["B", "major", "4467"],
+    ["C", "minor", "0133"],
+    ["A#/Bb", "minor", "3346"],
+    ["C", "7", "0213"],
+    ["F", "minor", "1334"],
+    ["D#/Eb", "minor", "3466"],
+    ["F", "7", "2131"],
+    ["G", "minor", "0013"],
+    ["G#/Ab", "minor", "1124"],
+    ["G", "7", "0021"],
+    ["D", "minor", "2001"],
+    ["C#/Db", "minor", "1244"],
+    ["D", "7", "2032"],
+    ["F#/Gb", "major", "3446"],
+    ["A", "major", "2245"],
+    ["A", "minor", "5200"],
+    ["A", "minor", "2235"],
+    ["F#/Gb", "minor", "2445"],
+    ["A", "7", "2243"],
+    ["E", "major", "1224"],
+    ["E", "minor", "0223"],
+    ["B", "minor", "4022"],
+    ["E", "7", "1020"],
+    ["A#/Bb", "7", "3354"],
+    ["D#/Eb", "7", "3143"],
+    ["G#/Ab", "7", "1132"],
+    ["C#/Db", "7", "1324"],
+    ["F#/Gb", "7", "3440"],
+    ["B", "7", "4405"],
+    ["C", "m7", "3133"],
+    ["F", "m7", "131"],
+    ["G", "m7", "0011"],
+    ["D", "m7", "2031"],
+    ["A", "m7", "2233"],
+    ["E", "m7", "0010"],
+    ["A#/Bb", "m7", "3344"],
+    ["D#/Eb", "m7", "3142"],
+    ["G#/Ab", "m7", "1122"],
+    ["C#/Db", "m7", "4244"],
+    ["F#/Gb", "m7", "2440"],
+    ["B", "m7", "2022"],
+  ].each do |data|
+    ChordDB.insert('mandolin', {
+      'chord' => data[0],
+      'modifier' => data[1],
+      'g' => data[2].chars.to_a[0],
+      'd' => data[2].chars.to_a[1],
+      'a' => data[2].chars.to_a[2],
+      'e' => data[2].chars.to_a[3],
+    })
+  end
+  "done"
+end
+
 get %r{^/(\w+)$} do |instrument|
   redirect "/#{instrument}/"
 end
