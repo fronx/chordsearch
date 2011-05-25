@@ -132,7 +132,6 @@ module ChordDB
         chord_class(instrument).new(result)
       end
     search_chord = chord_class(instrument).search_chord(query)
-    puts search_chord.data.inspect
     chords.sort_by do |chord|
       [
         chord.distance(search_chord),
