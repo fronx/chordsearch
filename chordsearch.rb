@@ -15,6 +15,17 @@ class GuitarChord
     'guitar'
   end
 
+  def self.search_chord(query)
+    new('data' => @query)
+  end
+
+  def self.modifiers
+    [
+      'major', 'minor', '7', 'm7', 'maj7', 'mmaj7', '6', 'm6', 'sus', 'dim', 'aug',
+      '7sus4', '5', '-5', '7-5', '7maj5', 'm9', 'maj9', 'add9', '11', '13', '6add9'
+    ]
+  end
+
   attr_reader :chord, :modifier, :data
 
   def initialize(raw = {})
@@ -39,6 +50,17 @@ class GuitarChord
   def key
     strings.map { |s| [s, data[s]] }.flatten.join <<
       '--' << name.gsub(/\s+/, '_')
+  end
+
+  def obscurity_score
+    self.class.modifiers.index(modifier) || self.class.modifiers.length
+  end
+
+  def distance(other)
+    data.inject(0) do |memo, string_fret|
+      string, fret = string_fret
+      memo + (other.data[string].to_i - fret.to_i).abs
+    end
   end
 
   def search_key
@@ -90,13 +112,18 @@ module ChordDB
     query = {} if q == 'all'
     query ||= Hash[
       q.to_s.split('--').first.scan(/([a-zA-Z])(\d+)/) # [['e', '5'], ['b', '6']]
-    ]
+    ] # {'e' => '5', 'b' => '6'}
   end
 
   def self.find_chords(query, instrument)
-    ENV['NOINTERNET'] ?
-      [GuitarChord.dummy] :
-      db[instrument].find(query).map { |result| GuitarChord.new(result) }
+    chords = ENV['NOINTERNET'] ? [GuitarChord.dummy] :
+      db[instrument].find(query).map do |result|
+        chord_class(instrument).new(result)
+      end
+    search_chord = chord_class(instrument).search_chord(query)
+    chords.sort_by do |chord|
+      [chord.distance(search_chord), chord.obscurity_score]
+    end
   end
 
   def self.insert(instrument, data)
@@ -127,7 +154,7 @@ end
 
 get %r{^/(\w+)/(.*)$} do |instrument, q|
   @query = ChordDB.query_from_param(q)
-  @search_chord = ChordDB[instrument].new
+  @search_chord = ChordDB[instrument].search_chord(@query)
   @chords = ChordDB.find_chords(@query, instrument)
   haml :chords
 end
