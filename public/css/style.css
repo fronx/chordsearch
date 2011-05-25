@@ -13,7 +13,7 @@ a, a:hover, a:link, a:visited { text-decoration: none; }
 
 .header { background-color: #333; color: white; font-size: 18px; padding: 0.5em 5%; margin-bottom: 30px; }
 
-.chord { margin: auto; min-height: 243px; }
+.chord { clear: both; margin: auto; margin-bottom: 20px; }
 .chord h1, .chord h1 a { color: #333; font-size: 22px; }
 
 .search .finger {
