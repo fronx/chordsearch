@@ -15,7 +15,7 @@
           %h1
             %a{href:'/'}= "chord search"
             = '/'
-            %a{href:'/#{@instrument}/'}= @instrument
+            %a{href: "/#{@instrument}/"}= @instrument
           - @search_chord.data.each do |string, fret|
             .string{class:"s_#{string}#{' last' if string == @search_chord.strings.last}#{' first' if string == @search_chord.strings.first}"}
               - ('1'..'12').each do |this_fret|
