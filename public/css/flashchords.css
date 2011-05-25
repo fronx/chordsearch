@@ -209,12 +209,14 @@ body { background-color: #eee; }
 .flashchord { display:block; width: 397px; margin: auto; min-height: 243px; }
 h1 { background-color: #eee; line-height: 2.9em; font-size: 40px; }
 h1 a { text-decoration: none; }
+
 .string { height: 25px; border-top: solid 3px #888; position: relative; border-left: 6px solid #777; background-color: white; }
-.quiet { border-top-color: #E9967A; }
-.s_E { height: 0; }
-.s_e { margin-top: 0; }
+.string.quiet { border-top-color: #E9967A; }
+.string.first { margin-top: 0; }
+.string.last { height: 0; }
+
 .fret { height: 28px; text-align: center; float: left; border-right: 3px double #ccc; overflow: visible; margin-right: -4px; }
-.string.s_E .fret { border-color: transparent; }
+.string.last .fret { border-color: transparent; }
 
 /* http://www.stewmac.com/freeinfo/Fretting/i-fretcalc.html */
 .fr_1  { width: 11.225%; }

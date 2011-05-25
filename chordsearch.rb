@@ -15,15 +15,7 @@ Hash.class_eval do
   end
 end
 
-class GuitarChord
-  def self.dummy
-    new('chord' => 'A', 'modifier' => 'major', 'b' => '2', 'g' => '2', 'D' => '2')
-  end
-
-  def self.instrument
-    'guitar'
-  end
-
+class Chord
   def self.search_chord(query)
     new(query)
   end
@@ -44,12 +36,8 @@ class GuitarChord
     @data = Hash[strings.map { |s| [s, raw[s] || '0'] }]
   end
 
-  def strings
-    ['E', 'A', 'D', 'g', 'b', 'e'].reverse
-  end
-
   def url_html
-    "http://chordsearch.heroku.com/guitar/#{key}"
+    "http://chordsearch.heroku.com/#{self.class.instrument}/#{key}"
   end
 
   def url_json
@@ -89,13 +77,55 @@ class GuitarChord
 
   def to_json(*args)
     {
-      "instrument" => "guitar",
+      "instrument" => self.class.instrument,
       "chord"      => chord,
       "modifier"   => modifier,
       "url_html"   => url_html,
       "url_json"   => url_json,
       "tones"      => data
     }.to_json
+  end
+end
+
+class GuitarChord < Chord
+  def self.dummy
+    new('chord' => 'A', 'modifier' => 'major', 'b' => '2', 'g' => '2', 'D' => '2')
+  end
+
+  def self.instrument
+    'guitar'
+  end
+
+  def strings
+    ['E', 'A', 'D', 'g', 'b', 'e'].reverse
+  end
+end
+
+class UkuleleChord < Chord
+  def self.dummy
+    new('chord' => 'G', 'modifier' => 'major', 'c' => '2', 'e' => '3', 'a' => '2')
+  end
+
+  def self.instrument
+    'ukulele'
+  end
+
+  def strings
+    ['g', 'c', 'e', 'a'].reverse
+  end
+end
+
+class MandolinChord < Chord
+  def self.dummy
+    new('chord' => 'C', 'modifier' => 'major', 'd' => '2', 'a' => '3')
+  end
+
+  def self.instrument
+    'mandolin'
+  end
+
+  def strings
+    ['g', 'd', 'a', 'e'].reverse
   end
 end
 
@@ -109,8 +139,10 @@ module ChordDB
   class << self
     def chord_class(instrument)
       {
-        'guitar' => GuitarChord,
-      }[instrument]
+        'guitar'   => GuitarChord,
+        'ukulele'  => UkuleleChord,
+        'mandolin' => MandolinChord,
+      }[instrument.downcase]
     end
     alias :[] :chord_class
   end
@@ -155,6 +187,7 @@ end
 
 get %r{^/(\w+)/$} do |instrument|
   redirect '/' unless ChordDB[instrument]
+  @instrument = instrument
   @query = {}
   @search_chord = ChordDB[instrument].new
   @chords = []
@@ -167,6 +200,7 @@ get %r{^/(\w+)/(.*\.json)$} do |instrument, q|
 end
 
 get %r{^/(\w+)/(.*)$} do |instrument, q|
+  @instrument = instrument
   @query = ChordDB.query_from_param(q)
   @search_chord = ChordDB[instrument].search_chord(@query)
   @chords = ChordDB.find_chords(@query, instrument)

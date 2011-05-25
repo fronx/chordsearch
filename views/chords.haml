@@ -15,9 +15,9 @@
           %h1
             %a{href:'/'}= "chord search"
             = '/'
-            %a{href:'/guitar/'}= "guitar"
+            %a{href:'/#{@instrument}/'}= @instrument
           - @search_chord.data.each do |string, fret|
-            .string{class:"s_#{string}"}
+            .string{class:"s_#{string}#{' last' if string == @search_chord.strings.last}#{' first' if string == @search_chord.strings.first}"}
               - ('1'..'12').each do |this_fret|
                 .fret{class: "fr_#{this_fret}"}
                   - if @query[string] == this_fret
@@ -42,7 +42,7 @@
             %h1
               %a{href: chord.url_html}= chord.name
             - chord.data.each do |string, fret|
-              .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
+              .string{class:"s_#{string}#{' quiet' if fret == 'x'}#{' last' if string == @search_chord.strings.last}#{' first' if string == @search_chord.strings.first}"}
                 - ('1'..'12').each do |this_fret|
                   .fret{class: "fr_#{this_fret}"}
                     - if fret == this_fret
