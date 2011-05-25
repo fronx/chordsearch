@@ -142,13 +142,6 @@ input[type="checkbox"] { vertical-align: bottom; *vertical-align: baseline; }
 /* hand cursor on clickable input elements */
 label, input[type=button], input[type=submit], button { cursor: pointer; }
 
-
-/* These selection declarations have to be separate.
-   No text-shadow: twitter.com/miketaylr/status/12228805301
-   Also: hot pink. */
-::-moz-selection{ background: #FF5E99; color:#fff; text-shadow: none; }
-::selection { background:#FF5E99; color:#fff; text-shadow: none; }
-
 /*  j.mp/webkit-tap-highlight-color */
 a:link { -webkit-tap-highlight-color: #FF5E99; }
 
