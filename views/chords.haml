@@ -14,28 +14,36 @@
         .chord
           %h1
             %a{href:'/'}= "chord search"
+            = '/'
+            %a{href:'/guitar/'}= "guitar"
           - @search_chord.data.each do |string, fret|
             .string{class:"s_#{string}"}
               - ('1'..'12').each do |this_fret|
                 .fret{class: "fr_#{this_fret}"}
                   - if @query[string] == this_fret
                     .finger
-                      %a{href:@search_chord.class.new(@query.reject { |k,v| k == string }).search_key, title: 'remove'}= '&nbsp;&nbsp;'
+                      %a{href:@search_chord.class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}= '&nbsp;&nbsp;'
                   - else
                     .finger.hidden
-                      %a{href:@search_chord.class.new(@query.merge(string => this_fret)).search_key, title:'add'}= '&nbsp;&nbsp;'
+                      %a{href:@search_chord.class.search_path(@query.merge(string => this_fret)), title:'add'}= '&nbsp;&nbsp;'
 
     #main
-      - @chords.each do |chord|
-        .chord
-          %h1
-            %a{href: chord.url_html}= chord.name
-          - chord.data.each do |string, fret|
-            .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
-              - ('1'..'12').each do |this_fret|
-                .fret{class: "fr_#{this_fret}"}
-                  - if fret == this_fret
-                    .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+      - if @chords.empty?
+        - if @query.empty?
+          just click on a fret position and we'll find chords that include the selected tone.
+        - else
+          oops, we don't know a chord like this. try something else instead?
+      - else
+        - @chords.each do |chord|
+          .chord
+            %h1
+              %a{href: chord.url_html}= chord.name
+            - chord.data.each do |string, fret|
+              .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
+                - ('1'..'12').each do |this_fret|
+                  .fret{class: "fr_#{this_fret}"}
+                    - if fret == this_fret
+                      .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
 
   .footer.wide
     .info

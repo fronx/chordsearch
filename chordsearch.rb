@@ -8,14 +8,11 @@ enable :static
 
 class GuitarChord
   def self.dummy
-    new(
-      'chord' => 'A', 'modifier' => 'major',
-      'b' => '2', 'g' => '2', 'D' => '2'
-    )
+    new('chord' => 'A', 'modifier' => 'major', 'b' => '2', 'g' => '2', 'D' => '2')
   end
 
-  def strings
-    ['E', 'A', 'D', 'g', 'b', 'e'].reverse
+  def self.instrument
+    'guitar'
   end
 
   attr_reader :chord, :modifier, :data
@@ -25,6 +22,10 @@ class GuitarChord
     @modifier = raw['modifier']
     @raw = raw
     @data = Hash[strings.map { |s| [s, raw[s] || '0'] }]
+  end
+
+  def strings
+    ['E', 'A', 'D', 'g', 'b', 'e'].reverse
   end
 
   def url_html
@@ -42,6 +43,11 @@ class GuitarChord
 
   def search_key
     @raw.to_a.flatten.join
+  end
+
+  def self.search_path(q)
+    path = new(q).search_key
+    path == '' ? "/#{instrument}/#{path}" : path
   end
 
   def name
@@ -65,6 +71,15 @@ module ChordDB
     uri = URI.parse(ENV['MONGOHQ_URL'])
     conn = Mongo::Connection.from_uri(ENV['MONGOHQ_URL'])
     @db = conn.db(uri.path.gsub(/^\//, ''))
+  end
+
+  class << self
+    def chord_class(instrument)
+      {
+        'guitar' => GuitarChord,
+      }[instrument]
+    end
+    alias :[] :chord_class
   end
 
   def self.db
@@ -93,15 +108,25 @@ get '/' do
   haml :index
 end
 
-get '/guitar/:q.json' do
-  query = ChordDB.query_from_param(params['q'])
-  ChordDB.find_chords(query, 'guitar').
-    to_json
+get %r{^/(\w+)$} do |instrument|
+  redirect "/#{instrument}/"
 end
 
-get '/guitar/:q' do
-  @query = ChordDB.query_from_param(params['q'])
-  @search_chord = GuitarChord.new
-  @chords = ChordDB.find_chords(@query, 'guitar')
+get %r{^/(\w+)/$} do |instrument|
+  @query = {}
+  @search_chord = ChordDB[instrument].new
+  @chords = []
+  haml :chords
+end
+
+get %r{^/(\w+)/(.*\.json)$} do |instrument, q|
+  query = ChordDB.query_from_param(q)
+  ChordDB.find_chords(query, instrument).to_json
+end
+
+get %r{^/(\w+)/(.*)$} do |instrument, q|
+  @query = ChordDB.query_from_param(q)
+  @search_chord = ChordDB[instrument].new
+  @chords = ChordDB.find_chords(@query, instrument)
   haml :chords
 end

@@ -43,6 +43,7 @@ a, a:hover, a:link, a:visited { text-decoration: none; }
 .future h2 { font-size: 18px; margin-bottom: 6px;}
 .future h3 { font-size: 1.1em; }
 
+.header .chord h1 { color: #ccc; }
 .header a, .header h1 a, .footer a { color: #fa0; }
 
 .header a:hover, .header h1 a:hover, .footer a:hover {
