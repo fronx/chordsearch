@@ -21,11 +21,11 @@
               - ('1'..'12').each do |this_fret|
                 .fret{class: "fr_#{this_fret}"}
                   - if @query[string] == this_fret
-                    .finger
-                      %a{href:@search_chord.class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}= '&nbsp;&nbsp;'
+                    %a.finger-position{href:@search_chord.class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}
+                      .finger
                   - else
-                    .finger.hidden
-                      %a{href:@search_chord.class.search_path(@query.merge(string => this_fret)), title:'add'}= '&nbsp;&nbsp;'
+                    %a.finger-position{href:@search_chord.class.search_path(@query.merge(string => this_fret)), title:'add'}
+                      .finger.hidden
 
     #main
       - if @chords.empty?
@@ -46,7 +46,8 @@
                 - ('1'..'12').each do |this_fret|
                   .fret{class: "fr_#{this_fret}"}
                     - if fret == this_fret
-                      .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+                      .finger-position
+                        .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
 
   .footer.wide
     .info
