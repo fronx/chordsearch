@@ -6,6 +6,15 @@ require 'json'
 set :app_file, __FILE__
 enable :static
 
+Hash.class_eval do
+  def slice(*keys)
+    allowed = Set.new(respond_to?(:convert_key) ? keys.map { |key| convert_key(key) } : keys)
+    hash = {}
+    allowed.each { |k| hash[k] = self[k] if has_key?(k) }
+    hash
+  end
+end
+
 class GuitarChord
   def self.dummy
     new('chord' => 'A', 'modifier' => 'major', 'b' => '2', 'g' => '2', 'D' => '2')
@@ -16,7 +25,7 @@ class GuitarChord
   end
 
   def self.search_chord(query)
-    new('data' => @query)
+    new(query)
   end
 
   def self.modifiers
@@ -31,7 +40,7 @@ class GuitarChord
   def initialize(raw = {})
     @chord = raw['chord']
     @modifier = raw['modifier']
-    @raw = raw
+    @raw = raw.slice(*strings)
     @data = Hash[strings.map { |s| [s, raw[s] || '0'] }]
   end
 
@@ -59,7 +68,9 @@ class GuitarChord
   def distance(other)
     data.inject(0) do |memo, string_fret|
       string, fret = string_fret
-      memo + (other.data[string].to_i - fret.to_i).abs
+      this_fret = fret == 'x' ? -5 : fret.to_i
+      other_fret = other.data[string] == 'x' ? -5 : other.data[string].to_i
+      memo + (this_fret - other_fret).abs
     end
   end
 
@@ -121,8 +132,12 @@ module ChordDB
         chord_class(instrument).new(result)
       end
     search_chord = chord_class(instrument).search_chord(query)
+    puts search_chord.data.inspect
     chords.sort_by do |chord|
-      [chord.distance(search_chord), chord.obscurity_score]
+      [
+        chord.distance(search_chord),
+        chord.obscurity_score,
+      ]
     end
   end
 
