@@ -32,7 +32,10 @@
         - if @query.empty?
           just click on a fret position and we'll find chords that include the selected tone.
         - else
-          oops, we don't know a chord like this. try something else instead?
+          %p
+            oops, we don't know a chord like this. try something else instead?
+          %p
+            <i>(click a position again to remove it from your chord search.)</i>
       - else
         - @chords.each do |chord|
           .chord
