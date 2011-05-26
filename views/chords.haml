@@ -15,16 +15,16 @@
           %h1
             %a{href:'/'}= "chord search"
             = '/'
-            %a{href: "/#{@instrument}/"}= @instrument
+            %a{href: "/#{@chord_class.instrument}/"}= @chord_class.instrument
           - @search_chord.data.each do |string, fret|
             .string{class:"s_#{string}#{' last' if string == @search_chord.strings.last}#{' first' if string == @search_chord.strings.first}"}
               - ('1'..'12').each do |this_fret|
                 .fret{class: "fr_#{this_fret}"}
                   - if @query[string] == this_fret
-                    %a.finger-position{href:@search_chord.class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}
+                    %a.finger-position{href:@chord_class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}
                       .finger
                   - else
-                    %a.finger-position{href:@search_chord.class.search_path(@query.merge(string => this_fret)), title:'add'}
+                    %a.finger-position{href:@chord_class.search_path(@query.merge(string => this_fret)), title:'add'}
                       .finger.hidden
 
     #main
@@ -41,6 +41,7 @@
           .chord
             %h1
               %a{href: chord.url_html}= chord.name
+              %a.play-chord{href:"##{chord.key}"} play
             - chord.data.each do |string, fret|
               .string{class:"s_#{string}#{' quiet' if fret == 'x'}#{' last' if string == @search_chord.strings.last}#{' first' if string == @search_chord.strings.first}"}
                 - ('1'..'12').each do |this_fret|
@@ -49,6 +50,51 @@
                       .finger-position
                         .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
 
+  .chord-player
+    - @chord_class.strings.reverse.each_with_index do |string, index|
+      - player_id = "chord_player_#{index}_#{string}"
+      - player_url = "http://player.soundcloud.com/player.swf?url=#{CGI.escape('http://soundcloud.com/fronx/sets/guitar-strings/')}&enable_api=true&object_id=#{player_id}&single_active=false&show_user=false&show_comments=false&auto_play=false&start_track=#{index}"
+      %object{height:"32", width:"100%", id:player_id, classid:"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"}
+        %param{name:"movie", value:player_url}
+        %param{name:"allowscriptaccess", value:"always"}
+        %embed{allowscriptaccess:"always", height:"32", src:player_url, type:"application/x-shockwave-flash", width:"100%", name:player_id}
+    %script{type:"text/javascript", src:"/js/jquery.js"}
+    %script{type:"text/javascript", src:"/js/soundcloud.player.api.js"}
+    :javascript
+      window.chordPlayers = [];
+      chordPlayers.stop = function() {
+        window.clearTimeout(this.timeoutID);
+        $.each(this, function() { this.api_stop(); });
+      };
+      chordPlayers.add = function(player) {
+        this.push(player);
+        this.sort(function(a, b) {
+          var compA = a.name.toUpperCase();
+          var compB = b.name.toUpperCase();
+          return (compA > compB) ? -1 : (compA < compB) ? 1 : 0;
+        });
+        player.api_seekTo(0);
+      };
+      chordPlayers.play = function(key) {
+        console.log(key);
+        this.stop();
+        $.each(this, function(index) {
+          var player = this;
+          player.api_seekTo(0);
+          window.setTimeout(function(index) { player.api_play() }, 50 * index);
+        });
+      };
+      soundcloud.addEventListener('onPlayerReady', function(player, data) {
+        chordPlayers.add(player);
+      });
+      soundcloud.addEventListener('onMediaPlay', function(player, data) {
+        console.log('play');
+        chordPlayers.timeoutID = window.setTimeout(function() { chordPlayers.stop() }, 4000);
+      });
+      $('.play-chord').live('click', function() {
+        chordPlayers.play($(this).attr('href'));
+        return false;
+      });
   .footer.wide
     .info
       %p this is a pet project by #{'<a href="http://fronx.wurmus.de/">fronx</a>'}.

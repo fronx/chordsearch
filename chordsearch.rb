@@ -2,6 +2,7 @@ require 'sinatra'
 require 'mongo'
 require 'haml'
 require 'json'
+require 'cgi'
 
 set :app_file, __FILE__
 enable :static
@@ -66,6 +67,10 @@ class Chord
     @raw.to_a.flatten.join
   end
 
+  def strings
+    self.class.strings
+  end
+
   def self.search_path(q)
     path = new(q).search_key
     path == '' ? "/#{instrument}/#{path}" : path
@@ -96,7 +101,7 @@ class GuitarChord < Chord
     'guitar'
   end
 
-  def strings
+  def self.strings
     ['E', 'A', 'D', 'g', 'b', 'e'].reverse
   end
 end
@@ -110,7 +115,7 @@ class UkuleleChord < Chord
     'ukulele'
   end
 
-  def strings
+  def self.strings
     ['g', 'c', 'e', 'a'].reverse
   end
 end
@@ -124,7 +129,7 @@ class MandolinChord < Chord
     'mandolin'
   end
 
-  def strings
+  def self.strings
     ['g', 'd', 'a', 'e'].reverse
   end
 end
@@ -186,10 +191,9 @@ get %r{^/(\w+)$} do |instrument|
 end
 
 get %r{^/(\w+)/$} do |instrument|
-  redirect '/' unless ChordDB[instrument]
-  @instrument = instrument
+  redirect '/' unless @chord_class = ChordDB[instrument]
   @query = {}
-  @search_chord = ChordDB[instrument].new
+  @search_chord = @chord_class.new
   @chords = []
   haml :chords
 end
@@ -200,9 +204,9 @@ get %r{^/(\w+)/(.*\.json)$} do |instrument, q|
 end
 
 get %r{^/(\w+)/(.*)$} do |instrument, q|
-  @instrument = instrument
+  @chord_class = ChordDB[instrument]
   @query = ChordDB.query_from_param(q)
-  @search_chord = ChordDB[instrument].search_chord(@query)
+  @search_chord = @chord_class.search_chord(@query)
   @chords = ChordDB.find_chords(@query, instrument)
   haml :chords
 end
