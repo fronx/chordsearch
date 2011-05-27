@@ -21,6 +21,7 @@ h1 a.play-chord {
   color: #fa0;
   display: none; /* js will show it (or not) */
 }
+.play-chord.loading { color: #fff; }
 
 .search .finger {
   background-color: #00b000;
