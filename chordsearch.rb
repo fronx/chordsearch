@@ -116,7 +116,7 @@ class GuitarChord < Chord
       'e-1', 'a', 'd',
       'g'  , 'b', 'e'
     ].map do |string|
-      SoundCloud.set_url('fronx', "guitar-string-#{string}").tap { |s| puts s }
+      SoundCloud.set_url('fronx', "guitar-string-#{string}")
     end
   end
 end
