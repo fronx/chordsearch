@@ -94,7 +94,7 @@ end
 
 class SoundCloud
   def self.set_url(user, name)
-    "http://soundcloud.com/#{user}/sets/#{name}/"
+    "http://soundcloud.com/#{user}/sets/#{name}/?v=1"
   end
 end
 
