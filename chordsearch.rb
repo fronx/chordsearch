@@ -34,7 +34,7 @@ class Chord
     @chord = raw['chord']
     @modifier = raw['modifier']
     @raw = raw.slice(*strings)
-    @data = Hash[strings.map { |s| [s, raw[s] || '0'] }]
+    @data = Hash[strings.reverse.map { |s| [s, raw[s] || '0'] }]
   end
 
   def url_html
@@ -92,6 +92,12 @@ class Chord
   end
 end
 
+class SoundCloud
+  def self.set_url(user, name)
+    "http://soundcloud.com/#{user}/sets/#{name}/"
+  end
+end
+
 class GuitarChord < Chord
   def self.dummy
     new('chord' => 'A', 'modifier' => 'major', 'b' => '2', 'g' => '2', 'D' => '2')
@@ -102,7 +108,16 @@ class GuitarChord < Chord
   end
 
   def self.strings
-    ['E', 'A', 'D', 'g', 'b', 'e'].reverse
+    ['E', 'A', 'D', 'g', 'b', 'e']
+  end
+
+  def self.string_sets
+    [
+      'e-1', 'a', 'd',
+      'g'  , 'b', 'e'
+    ].map do |string|
+      SoundCloud.set_url('fronx', "guitar-string-#{string}").tap { |s| puts s }
+    end
   end
 end
 
@@ -116,7 +131,7 @@ class UkuleleChord < Chord
   end
 
   def self.strings
-    ['g', 'c', 'e', 'a'].reverse
+    ['g', 'c', 'e', 'a']
   end
 end
 
@@ -130,7 +145,7 @@ class MandolinChord < Chord
   end
 
   def self.strings
-    ['g', 'd', 'a', 'e'].reverse
+    ['g', 'd', 'a', 'e']
   end
 end
 

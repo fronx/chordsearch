@@ -15,6 +15,12 @@ a, a:hover, a:link, a:visited { text-decoration: none; }
 
 .chord { clear: both; margin: auto; margin-bottom: 20px; }
 .chord h1, .chord h1 a { color: #333; font-size: 22px; }
+h1 a.play-chord {
+  font-size: 12px;
+  color: #fa0;
+  display: none; /* js will show it (or not) */
+}
+
 
 .search .finger {
   background-color: #00b000;
