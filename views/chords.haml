@@ -56,10 +56,10 @@
       - @chord_class.strings.each_with_index do |string, index|
         - player_id = "chord_player_#{index}_#{string}"
         - player_url = "http://player.soundcloud.com/player.swf?url=#{CGI.escape(@chord_class.string_sets[index])}&enable_api=true&object_id=#{player_id}&single_active=false&show_user=false&show_comments=false&auto_play=false&start_track=0"
-        %object{height:"32", width:"100%", id:player_id, classid:"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"}
+        %object{height:"0", width:"100%", id:player_id, classid:"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"}
           %param{name:"movie", value:player_url}
           %param{name:"allowscriptaccess", value:"always"}
-          %embed{allowscriptaccess:"always", height:"32", src:player_url, type:"application/x-shockwave-flash", width:"100%", name:player_id}
+          %embed{allowscriptaccess:"always", height:"0", src:player_url, type:"application/x-shockwave-flash", width:"100%", name:player_id}
       %script{type:"text/javascript", src:"/js/jquery.js"}
       %script{type:"text/javascript", src:"/js/soundcloud.player.api.js"}
       %script{type:"text/javascript", src:"/js/chord-player.js"}
