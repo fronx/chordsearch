@@ -28,13 +28,27 @@ class Chord
     ]
   end
 
+  def self.max_fret
+    12
+  end
+
   attr_reader :chord, :modifier, :data
 
   def initialize(raw = {})
     @chord = raw['chord']
     @modifier = raw['modifier']
     @raw = raw.slice(*strings)
-    @data = Hash[strings.reverse.map { |s| [s, raw[s] || '0'] }]
+    @data = Hash[
+      strings.reverse.map do |s|
+        if raw[s] == 'x'
+          fret = 'x'
+        else
+          fret = raw[s].to_i
+          fret -= 12 if fret > self.class.max_fret
+        end
+        [s, fret.to_s]
+      end
+    ]
   end
 
   def url_html
@@ -179,7 +193,7 @@ module ChordDB
   end
 
   def self.find_chords(query, instrument)
-    chords = ENV['NOINTERNET'] ? [GuitarChord.dummy] :
+    chords = ENV['NOINTERNET'] ? [chord_class(instrument).dummy] :
       db[instrument].find(query).map do |result|
         chord_class(instrument).new(result)
       end
