@@ -4,24 +4,65 @@
   %meta{'http-equiv' => "X-UA-Compatible", 'content' => "IE=edge,chrome=1"}
   %title Chord Search
   %meta{name:"viewport", content:"width=device-width; initial-scale=1.0; maximum-scale=1.0;"}
-  %link{rel:"stylesheet", href:"/css/flashchords.css?v=1"}
-  %link{rel:"stylesheet", href:"/css/style.css?v=1"}
+  %link{rel:"stylesheet", href:"/css/flashchords.css?v=2"}
+  %link{rel:"stylesheet", href:"/css/style.css?v=2.1"}
 
 %body
   .container
     .header
-      %a{href:'/'}= "chord search"
-      &nbsp;
-      = @query.inspect
-    #main
-      - @chords.each do |chord|
+      .search
         .chord
           %h1
-            %a{href: chord.url_html}= chord.name
-          - chord.data.each do |string, fret|
-            .string{class:"s_#{string} #{'quiet' if fret == 'x'}"}
-              .fret{class: "fr_#{fret}"}
-                %span.finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+            %a{href:'/'}= "chord search"
+            = '/'
+            %a{href: "/#{@chord_class.instrument}/"}= @chord_class.instrument
+          - @search_chord.data.each do |string, fret|
+            .string{class:"s_#{string}#{' last' if string == @search_chord.strings.first}#{' first' if string == @search_chord.strings.last}"}
+              - ('1'..'12').each do |this_fret|
+                .fret{class: "fr_#{this_fret}"}
+                  - if @query[string] == this_fret
+                    %a.finger-position{href:@chord_class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}
+                      .finger
+                  - else
+                    %a.finger-position{href:@chord_class.search_path(@query.merge(string => this_fret)), title:'add'}
+                      .finger.hidden
+
+    #main
+      - if @chords.empty?
+        - if @query.empty?
+          just click on a fret position and we'll find chords that include the selected tone.
+        - else
+          %p
+            oops, we don't know a chord like this. try something else instead?
+          %p
+            <i>(click a position again to remove it from your chord search.)</i>
+      - else
+        - @chords.each do |chord|
+          .chord
+            %h1
+              %a{href: chord.url_html}= chord.name
+              - if @chord_class.respond_to?(:string_sets)
+                %a.play-chord{href:"##{chord.key}"} play
+            - chord.data.each do |string, fret|
+              .string{class:"s_#{string}#{' quiet' if fret == 'x'}#{' last' if string == @search_chord.strings.first}#{' first' if string == @search_chord.strings.last}"}
+                - ('1'..'12').each do |this_fret|
+                  .fret{class: "fr_#{this_fret}"}
+                    - if fret == this_fret
+                      .finger-position
+                        .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+
+  - if @chord_class.respond_to?(:string_sets)
+    #chord-player{'cp-string-count' => @chord_class.strings.length }
+      - @chord_class.strings.each_with_index do |string, index|
+        - player_id = "chord_player_#{index}_#{string}"
+        - player_url = "http://player.soundcloud.com/player.swf?url=#{CGI.escape(@chord_class.string_sets[index])}&enable_api=true&object_id=#{player_id}&single_active=false&show_user=false&show_comments=false&auto_play=false&start_track=0"
+        %object{height:"0", width:"100%", id:player_id, classid:"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"}
+          %param{name:"movie", value:player_url}
+          %param{name:"allowscriptaccess", value:"always"}
+          %embed{allowscriptaccess:"always", height:"0", src:player_url, type:"application/x-shockwave-flash", width:"100%", name:player_id}
+      %script{type:"text/javascript", src:"/js/jquery.js"}
+      %script{type:"text/javascript", src:"/js/soundcloud.player.api.js"}
+      %script{type:"text/javascript", src:"/js/chord-player.js?v=2"}
 
   .footer.wide
     .info

@@ -6,6 +6,9 @@
 - [http://chordsearch.heroku.com/guitar/e5D7.json](http://chordsearch.heroku.com/guitar/e5D7.json)
 - [http://chordsearch.heroku.com/guitar/e5D7](http://chordsearch.heroku.com/guitar/e5D7) (for html)
 
+## search via visual input
+- search chords by clicking on a graphical fretboard
+
 ## html output
 chords are displayed as pictures thanks to [theophani](https://github.com/theophani)'s [styling](https://github.com/theophani/Flashchords/blob/master/fc/css/style.css).
 
@@ -37,9 +40,6 @@ chords are displayed as pictures thanks to [theophani](https://github.com/theoph
 - chords are stored as `{ "name": "A major", "e": "5", "b": "5", "g": "6", "D": "7", "A": "7", "E": "5" }`
 
 # in the works
-
-## visual input
-- search chords by clicking on a graphical fretboard
 
 ## audio input
     in:  audio recording

@@ -5,24 +5,38 @@ html, body {
   line-height: 1.4em;
 }
 
-#main {
-  width: 90%;
-  margin: 0 auto;
-}
+#main { width: 90%; margin: 0 auto; }
 
-p {
-  padding: 0 0 0.3em 0;
-  margin: 0;
-}
+p { padding: 0 0 0.3em 0; margin: 0; }
 
-a, a:hover, a:link, a:visited {
-  text-decoration: none;
-}
+a, a:hover, a:link, a:visited { text-decoration: none; }
 
 .header { background-color: #333; color: white; font-size: 18px; padding: 0.5em 5%; margin-bottom: 30px; }
 
-.chord { margin: auto; min-height: 243px; }
+.chord { clear: both; margin: auto; margin-bottom: 20px; }
 .chord h1, .chord h1 a { color: #333; font-size: 22px; }
+
+h1 a.play-chord {
+  font-size: 12px;
+  color: #fa0;
+  display: none; /* js will show it (or not) */
+}
+.play-chord.loading { color: #fff; }
+
+.search .finger {
+  background-color: #00b000;
+}
+.search .finger.hidden {
+  background-color: #aaa;
+  opacity: 0.1;
+}
+.search .finger:hover {
+  opacity: 0.7;
+}
+.search .finger.hidden:hover {
+  background-color: #00b000;
+  opacity: 0.7;
+}
 
 .future {
   font-size: 14px;
@@ -36,12 +50,16 @@ a, a:hover, a:link, a:visited {
 .future h2 { font-size: 18px; margin-bottom: 6px;}
 .future h3 { font-size: 1.1em; }
 
-.header a, .footer a { color: #fa0; }
+.header .chord h1 { color: #ccc; }
+.header a, .header h1 a, .footer a { color: #fa0; }
 
-.header a:hover, .footer a:hover {
+.header a:hover, .header h1 a:hover, .footer a:hover {
   color: white;
   text-shadow: #fff 0 0 30px;
 }
+
+.header h1 { background-color: transparent; margin-bottom: 10px;}
+.header .string { background-color: #555;}
 
 .footer {
   background-color: #444;
