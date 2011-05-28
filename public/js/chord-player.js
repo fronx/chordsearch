@@ -35,7 +35,7 @@ window.chordPlayers = [];
     };
   };
 
-  var chordBuffered = function(chordKey) {
+  var chordBuffered = function(chordKey) {
     var allBuffered = true;
     $.each(chordKeyToToneKeys(chordKey), function() {
       bufferedTrack[this] || (allBuffered = false);
