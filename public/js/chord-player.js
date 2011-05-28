@@ -5,9 +5,9 @@ chordPlayers.stop = function() {
   $.each(this, function() { this.api_stop(); });
 };
 
-chordPlayers.stringCount = function() {
+chordPlayers.stringCount = (function() {
   return parseInt($('#chord-player').attr('cp-string-count'));
-};
+}());
 
 chordPlayers.add = function(player) {
   this.push(player);
@@ -16,7 +16,7 @@ chordPlayers.add = function(player) {
     var compB = b.name.toUpperCase();
     return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
   });
-  if (this.length == this.stringCount()) {
+  if (this.length == this.stringCount) {
     $('.play-chord').show();
   };
 };
