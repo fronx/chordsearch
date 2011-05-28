@@ -2,16 +2,14 @@ window.chordPlayers = [];
 
 (function(){
 
-  chordPlayers.stop = function() {
-    $('.play-chord').removeClass('loading');
-    $.each(this, function() { this.api_stop(); });
-  };
+  var timeoutID;
+  var chordKey;
 
-  chordPlayers.stringCount = (function() {
+  var stringCount = (function() {
     return parseInt($('#chord-player').attr('cp-string-count'));
   }());
 
-  chordPlayers.playerFromToneKey = function(toneKey) {
+  var playerFromToneKey = function(toneKey) {
     var string = toneKey.match(/([a-z])(\d+)/i)[1];  // ["e2", "e", "2"] --> "e"
     var players = chordPlayers.filter(function(item){
       return item.name.split('_').reverse()[0] == string;
@@ -19,7 +17,7 @@ window.chordPlayers = [];
     return players[0];
   };
 
-  chordPlayers.init = function(player, toneKey) {
+  var init = function(player, toneKey) {
     var fret = toneKey.match(/([a-z])(\d+)/i)[2]; // ["e2", "e", "2"] --> "2"
     console.log('init: ' + toneKey);
     player.api_setVolume(0);
@@ -27,41 +25,41 @@ window.chordPlayers = [];
     player.api_seekTo(0);
   };
 
-  chordPlayers.bufferedTrack = {};
+  var bufferedTrack = {};
 
-  chordPlayers.bufferTrack = function(toneKey) {
-    if (!chordPlayers.bufferedTrack[toneKey]) {
-      var player = this.playerFromToneKey(toneKey);
-      chordPlayers.init(player, toneKey);
+  var bufferTrack = function(toneKey) {
+    if (!bufferedTrack[toneKey]) {
+      var player = playerFromToneKey(toneKey);
+      init(player, toneKey);
       player.api_play();
     };
   };
 
-  chordPlayers.chordBuffered = function(chordKey) {
+  var chordBuffered = function(chordKey) {
     var allBuffered = true;
-    $.each(this.chordKeyToToneKeys(chordKey), function() {
-      chordPlayers.bufferedTrack[this] || (allBuffered = false);
+    $.each(chordKeyToToneKeys(chordKey), function() {
+      bufferedTrack[this] || (allBuffered = false);
     });
     return allBuffered;
   };
 
-  chordPlayers.poller = null;
+  var poller = null;
 
-  chordPlayers._forgetBufferStates = function() {
-    $.each(Object.keys(chordPlayers.bufferedTrack), function() {
-      if (chordPlayers.chordKeyToToneKeys(chordPlayers.chordKey).indexOf('' + this) == -1) {
-        chordPlayers.bufferedTrack[this] = null;
+  var _forgetBufferStates = function() {
+    $.each(Object.keys(bufferedTrack), function() {
+      if (chordKeyToToneKeys(chordKey).indexOf('' + this) == -1) {
+        bufferedTrack[this] = null;
       }
     });
   };
 
-  chordPlayers._play = function() {
-    window.clearTimeout(this.timeoutID);
-    this.timeoutID = null;
+  var _play = function() {
+    window.clearTimeout(timeoutID);
+    timeoutID = null;
 
-    $.each(this.chordKeyToToneKeys(this.chordKey), function(index) {
+    $.each(chordKeyToToneKeys(chordKey), function(index) {
       var toneKey = this;
-      var player = chordPlayers.playerFromToneKey(this);
+      var player = playerFromToneKey(this);
       player.api_stop();
       player.api_setVolume(100);
 
@@ -71,32 +69,32 @@ window.chordPlayers = [];
     });
 
     // stop
-    chordPlayers.timeoutID = window.setTimeout(function() {
+    timeoutID = window.setTimeout(function() {
       console.log('timeout!');
       chordPlayers.stop();
     }, 3000);
   };
 
-  chordPlayers._buffer = function() {
-    $.each(this.chordKeyToToneKeys(this.chordKey), function() {
-      chordPlayers.bufferedTrack[this] ||
-        chordPlayers.bufferTrack(this), allBuffered = false;
+  var _buffer = function() {
+    $.each(chordKeyToToneKeys(chordKey), function() {
+      bufferedTrack[this] ||
+        bufferTrack(this), allBuffered = false;
     });
   };
 
-  chordPlayers._wait = function() {
-    if (chordPlayers.poller == null) {
-      chordPlayers.poller = window.setInterval(function(){
-        if (chordPlayers.chordBuffered(chordPlayers.chordKey)) {
-          window.clearInterval(chordPlayers.poller);
-          chordPlayers.poller = null;
-          chordPlayers.play();
+  var _wait = function() {
+    if (poller == null) {
+      poller = window.setInterval(function(){
+        if (chordBuffered(chordKey)) {
+          window.clearInterval(poller);
+          poller = null;
+          play();
         }
       }, 50);
     }
   };
 
-  chordPlayers.chordKeyToToneKeys = function(chordKey) {
+  var chordKeyToToneKeys = function(chordKey) {
     return chordKey           // #e0b1g2D2A0Ex--A_minor
       .replace('#', '')       // e0b1g2D2A0Ex--A_minor
       .split('--')[0]         // e0b1g2D2A0Ex
@@ -106,44 +104,54 @@ window.chordPlayers = [];
       });
   };
 
-  chordPlayers.toneKeyFromPlayer = function(player) {
+  var toneKeyFromPlayer = function(player) {
     string = player.name.split('_').reverse()[0];
     fret = player.api_getCurrentTrackIndex();
     return string + fret;
   };
 
-  chordPlayers.add = function(player) {
+  var add = function(player) {
     this.push(player);
     this.sort(function(a, b) {
       var compA = a.name.toUpperCase();
       var compB = b.name.toUpperCase();
       return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
     });
-    if (this.length == this.stringCount) {
+    if (this.length == stringCount) {
       $('.play-chord').show();
     };
   };
 
-  chordPlayers.doneBuffering = function(player) {
+  var doneBuffering = function(player) {
     player.api_stop();
-    this.bufferedTrack[this.toneKeyFromPlayer(player)] = true;
+    bufferedTrack[toneKeyFromPlayer(player)] = true;
     console.log('onMediaDoneBuffering');
   };
 
-  chordPlayers.play = function(playLink) {
+  var stop = function() {
+    $('.play-chord').removeClass('loading');
+    $.each(this, function() { this.api_stop(); });
+  };
+
+  var play = function(playLink) {
     if (playLink != undefined) {
-      this.chordKey = $(playLink).attr('href');
+      chordKey = $(playLink).attr('href');
     };
 
-    this._forgetBufferStates();
+    _forgetBufferStates();
 
-    if (this.chordBuffered(this.chordKey)) {
-      this._play();
+    if (chordBuffered(chordKey)) {
+      _play();
     } else {
-      this._buffer();
-      this._wait();
+      _buffer();
+      _wait();
     }
   };
+
+  chordPlayers.add = add;
+  chordPlayers.doneBuffering = doneBuffering;
+  chordPlayers.stop = stop;
+  chordPlayers.play = play;
 
 }());
 
