@@ -1,7 +1,7 @@
 window.chordPlayers = [];
 
 (function(){
-  
+
   chordPlayers.stop = function() {
     $('.play-chord').removeClass('loading');
     $.each(this, function() { this.api_stop(); });
@@ -10,18 +10,6 @@ window.chordPlayers = [];
   chordPlayers.stringCount = (function() {
     return parseInt($('#chord-player').attr('cp-string-count'));
   }());
-
-  chordPlayers.add = function(player) {
-    this.push(player);
-    this.sort(function(a, b) {
-      var compA = a.name.toUpperCase();
-      var compB = b.name.toUpperCase();
-      return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
-    });
-    if (this.length == this.stringCount) {
-      $('.play-chord').show();
-    };
-  };
 
   chordPlayers.playerFromToneKey = function(toneKey) {
     var string = toneKey.match(/([a-z])(\d+)/i)[1];  // ["e2", "e", "2"] --> "e"
@@ -49,12 +37,6 @@ window.chordPlayers = [];
     };
   };
 
-  chordPlayers.doneBuffering = function(player) {
-    player.api_stop();
-    this.bufferedTrack[this.toneKeyFromPlayer(player)] = true;
-    console.log('onMediaDoneBuffering');
-  };
-
   chordPlayers.chordBuffered = function(chordKey) {
     var allBuffered = true;
     $.each(this.chordKeyToToneKeys(chordKey), function() {
@@ -64,21 +46,6 @@ window.chordPlayers = [];
   };
 
   chordPlayers.poller = null;
-
-  chordPlayers.play = function(playLink) {
-    if (playLink != undefined) {
-      this.chordKey = $(playLink).attr('href');
-    };
-
-    this._forgetBufferStates();
-
-    if (this.chordBuffered(this.chordKey)) {
-      this._play();
-    } else {
-      this._buffer();
-      this._wait();
-    }
-  };
 
   chordPlayers._forgetBufferStates = function() {
     $.each(Object.keys(chordPlayers.bufferedTrack), function() {
@@ -145,7 +112,39 @@ window.chordPlayers = [];
     return string + fret;
   };
 
-  
+  chordPlayers.add = function(player) {
+    this.push(player);
+    this.sort(function(a, b) {
+      var compA = a.name.toUpperCase();
+      var compB = b.name.toUpperCase();
+      return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+    });
+    if (this.length == this.stringCount) {
+      $('.play-chord').show();
+    };
+  };
+
+  chordPlayers.doneBuffering = function(player) {
+    player.api_stop();
+    this.bufferedTrack[this.toneKeyFromPlayer(player)] = true;
+    console.log('onMediaDoneBuffering');
+  };
+
+  chordPlayers.play = function(playLink) {
+    if (playLink != undefined) {
+      this.chordKey = $(playLink).attr('href');
+    };
+
+    this._forgetBufferStates();
+
+    if (this.chordBuffered(this.chordKey)) {
+      this._play();
+    } else {
+      this._buffer();
+      this._wait();
+    }
+  };
+
 }());
 
 // - - - - - - - - - - - - - - - - - - - - - - -
