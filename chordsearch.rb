@@ -161,6 +161,12 @@ class MandolinChord < Chord
   def self.strings
     ['g', 'd', 'a', 'e']
   end
+
+  def self.string_sets
+    strings.map do |string|
+      SoundCloud.set_url('fronx', "mandolin-string-#{string}")
+    end
+  end
 end
 
 module ChordDB

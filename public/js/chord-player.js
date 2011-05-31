@@ -65,7 +65,7 @@ window.chordPlayers = [];
 
       window.setTimeout(function() {
         player.api_play();
-      }, 50 * (index + 10));
+      }, 60 * (index + 10));
     });
 
     // stop
