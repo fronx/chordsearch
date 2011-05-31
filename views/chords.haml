@@ -16,18 +16,7 @@
             %a{href:'/'}= "chord search"
             = '/'
             %a{href: "/#{@chord_class.instrument}/"}= @chord_class.instrument
-          - @search_chord.data.each do |string, fret|
-            .string{class:"s_#{string}#{' last' if string == @search_chord.strings.first}#{' first' if string == @search_chord.strings.last}"}
-              - ('0'..'12').each do |this_fret|
-                .fret{class: "fr_#{this_fret}"}
-                  - if @query[string] == this_fret
-                    %a.finger-position{href:@chord_class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}
-                      .finger
-                        = @search_chord.tone(string)
-                  - else
-                    %a.finger-position{href:@chord_class.search_path(@query.merge(string => this_fret)), title:'add'}
-                      .finger.hidden
-                        = @search_chord.tone(string, this_fret)
+          = render :haml, :chord, :locals => {:chord => @search_chord }
 
     #main
       - if @chords.empty?
@@ -45,14 +34,7 @@
               %a{href: chord.url_html}= chord.name
               - if @chord_class.respond_to?(:string_sets)
                 %a.play-chord{href:"##{chord.key}"} play
-            - chord.data.each do |string, fret|
-              .string{class:"s_#{string}#{' quiet' if fret == 'x'}#{' last' if string == @search_chord.strings.first}#{' first' if string == @search_chord.strings.last}"}
-                - ('0'..'12').each do |this_fret|
-                  .fret{class: "fr_#{this_fret}"}
-                    - if fret == this_fret
-                      .finger-position
-                        .finger{class: ('queried' if @query.has_key?(string))}
-                          = chord.tone(string)
+            = render :haml, :chord, :locals => {:chord => chord }
 
   - if @chord_class.respond_to?(:string_sets)
     #chord-player{'cp-string-count' => @chord_class.strings.length }

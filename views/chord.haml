@@ -1,0 +1,12 @@
+- chord.data.each do |string, fret|
+  .string{class:"s_#{string}#{' quiet' if fret == 'x'}#{' last' if string == chord.strings.first}#{' first' if string == chord.strings.last}"}
+    - ('0'..'12').each do |this_fret|
+      .fret{class: "fr_#{this_fret}"}
+        - if fret == this_fret
+          %a.finger-position{href:(@query.has_key?(string) ? @chord_class.search_path(@query.reject { |k,v| k == string }) : @chord_class.search_path(@query.merge(string => this_fret))), title: (@query.has_key?(string) ? 'remove' : 'add')}
+            .finger.chord{class: (@query.has_key?(string) ? 'queried' : '')}
+              = chord.tone(string)
+        - else
+          %a.hidden.finger-position{href:@chord_class.search_path(@query.merge(string => this_fret)), title:'add'}
+            .finger
+              = chord.tone(string, this_fret)
