@@ -23,6 +23,13 @@ h1 a.play-chord {
 }
 .play-chord.loading { color: #fff; }
 
+.finger {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  line-height: 19px;
+  font-size: 11px;
+  text-align: center;
+}
+
 .search .finger {
   background-color: #00b000;
 }
@@ -30,10 +37,10 @@ h1 a.play-chord {
   background-color: #aaa;
   opacity: 0.1;
 }
-.search .finger:hover {
+.search .finger-position:hover .finger {
   opacity: 0.7;
 }
-.search .finger.hidden:hover {
+.search .finger-position:hover .finger.hidden {
   background-color: #00b000;
   opacity: 0.7;
 }

@@ -23,9 +23,11 @@
                   - if @query[string] == this_fret
                     %a.finger-position{href:@chord_class.search_path(@query.reject { |k,v| k == string }), title: 'remove'}
                       .finger
+                        = @search_chord.tone(string)
                   - else
                     %a.finger-position{href:@chord_class.search_path(@query.merge(string => this_fret)), title:'add'}
                       .finger.hidden
+                        = @search_chord.tone(string, this_fret)
 
     #main
       - if @chords.empty?
@@ -49,7 +51,8 @@
                   .fret{class: "fr_#{this_fret}"}
                     - if fret == this_fret
                       .finger-position
-                        .finger{class: ('queried' if @query.has_key?(string))} &nbsp;
+                        .finger{class: ('queried' if @query.has_key?(string))}
+                          = chord.tone(string)
 
   - if @chord_class.respond_to?(:string_sets)
     #chord-player{'cp-string-count' => @chord_class.strings.length }

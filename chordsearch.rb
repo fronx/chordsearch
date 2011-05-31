@@ -28,6 +28,14 @@ class Chord
     ]
   end
 
+  def self.chromatic_scale
+    ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+  end
+
+  def self.chromatic_index(tone)
+    chromatic_scale.index(tone.upcase)
+  end
+
   def self.max_fret
     12
   end
@@ -83,6 +91,14 @@ class Chord
 
   def strings
     self.class.strings
+  end
+
+  def tone(string, fret=nil)
+    fret ||= data[string]
+    return nil if fret == 'x'
+    index = self.class.chromatic_index(string) + fret.to_i
+    index -= 12 while index > 11
+    self.class.chromatic_scale[index]
   end
 
   def self.search_path(q)
