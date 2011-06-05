@@ -9,14 +9,26 @@
 
 %body
   .container
+    - if @collection
+      .collection
+        %h1
+          chord collection:
+          %a{href:"/#{@search_chord.class.instrument}?c=#{@collection.name}"}= @collection.name
+        - @collection.chords.each do |chord|
+          .chord
+            %h1
+              %a{href: chord.url_html}= chord.name
+              - if chord.class.respond_to?(:string_sets)
+                %a.play-chord{href:"##{chord.key}"} play
+            = render :haml, :chord, :locals => {:chord => chord}
     .header
       .search
         .chord
           %h1
             %a{href:'/'}= "chord search"
             = '/'
-            %a{href: "/#{@chord_class.instrument}/"}= @chord_class.instrument
-          = render :haml, :chord, :locals => {:chord => @search_chord }
+            %a{href: "/#{@search_chord.class.instrument}/"}= @search_chord.class.instrument
+          = render :haml, :chord, :locals => {:chord => @search_chord}
 
     #main
       - if @chords.empty?
@@ -32,15 +44,17 @@
           .chord
             %h1
               %a{href: chord.url_html}= chord.name
-              - if @chord_class.respond_to?(:string_sets)
+              - if @collection
+                %a.add{href:"#{request.path}/add/#{@collection.name}/#{chord.path_html}"}= "add to #{@collection.name}"
+              - if chord.class.respond_to?(:string_sets)
                 %a.play-chord{href:"##{chord.key}"} play
-            = render :haml, :chord, :locals => {:chord => chord }
+            = render :haml, :chord, :locals => {:chord => chord}
 
-  - if @chord_class.respond_to?(:string_sets)
-    #chord-player{'cp-string-count' => @chord_class.strings.length }
-      - @chord_class.strings.each_with_index do |string, index|
+  - if @search_chord.class.respond_to?(:string_sets)
+    #chord-player{'cp-string-count' => @search_chord.class.strings.length }
+      - @search_chord.class.strings.each_with_index do |string, index|
         - player_id = "chord_player_#{index}_#{string}"
-        - player_url = "http://player.soundcloud.com/player.swf?url=#{CGI.escape(@chord_class.string_sets[index])}&enable_api=true&object_id=#{player_id}&single_active=false&show_user=false&show_comments=false&auto_play=false&start_track=0"
+        - player_url = "http://player.soundcloud.com/player.swf?url=#{CGI.escape(@search_chord.class.string_sets[index])}&enable_api=true&object_id=#{player_id}&single_active=false&show_user=false&show_comments=false&auto_play=false&start_track=0"
         %object{height:"0", width:"100%", id:player_id, classid:"clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"}
           %param{name:"movie", value:player_url}
           %param{name:"allowscriptaccess", value:"always"}
