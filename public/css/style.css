@@ -87,12 +87,13 @@ h1 a.add { font-size: 12px; color: #fa0; }
 .finger { display: none; }
 
 .finger.chord { color: #fff; background-color: #222; }
+.collection .finger.chord { background-color: #222; }
+.collection .fret .finger.queried { background-color: #222; }
 .fr_0 .finger.chord            { background-color: #dddddd; color: #555; }
 .fret .finger.queried          { background-color: #009000; color: white; }
 .finger, .search .fret .finger { background-color: #666666; color: white; }
 
 .finger.chord, .search .fret .finger { display: block; }
-
 
 .search .fret .finger { opacity: 0.4; }
 .search .fret .finger.queried { background-color: #00b000; opacity: 1.0; }
