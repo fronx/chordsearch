@@ -24,9 +24,9 @@ get %r{^/collection/([^/]+)/?$} do |collection|
 end
 
 get %r{^/(\w+)/$} do |instrument|
-  redirect '/' unless @chord_class = ChordDB[instrument]
+  redirect '/' unless ChordDB[instrument]
   @query = {}
-  @search_chord = @chord_class.new
+  @search_chord = ChordDB[instrument].new
   @chords = []
   @collection = collection
   haml :chords
@@ -45,9 +45,8 @@ get %r{^/(\w+)/([^/]+)/add/([^/]+)/(.*)$} do |instrument, q, collection, chord_k
 end
 
 get %r{^/(\w+)/(.*)$} do |instrument, q|
-  @chord_class = ChordDB[instrument]
   @query = ChordDB.query_from_param(q)
-  @search_chord = @chord_class.search_chord(@query)
+  @search_chord = ChordDB[instrument].search_chord(@query)
   @chords = ChordDB.find_chords(@query, instrument)
   @collection = collection
   haml :chords
