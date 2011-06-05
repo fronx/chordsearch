@@ -13,7 +13,7 @@
       .collection
         %h1
           chord collection:
-          %a{href:"/#{@search_chord.class.instrument}?c=#{@collection.name}"}= @collection.name
+          %a{href:"/#{@search_chord.class.instrument}/?c=#{@collection.name}"}= @collection.name
         - @collection.chords.each do |chord|
           .chord
             %h1
@@ -23,6 +23,7 @@
             = render :haml, :chord, :locals => {:chord => chord}
     .header
       .search
+        %a{name:'search', id:'search'}
         .chord
           %h1
             %a{href:'/'}= "chord search"

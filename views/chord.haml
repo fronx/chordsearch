@@ -2,11 +2,17 @@
   .string{class:"s_#{string}#{' quiet' if fret == 'x'}#{' last' if string == chord.strings.first}#{' first' if string == chord.strings.last}"}
     - ('0'..'12').each do |this_fret|
       .fret{class: "fr_#{this_fret}"}
+        - search_path = if (fret == this_fret) && @query.has_key?(string)
+          - chord.class.search_path(@query.reject { |k,v| k == string })
+        - else
+          - chord.class.search_path(@query.merge(string => this_fret))
+        - search_path += "?c=#{@collection.name}" if @collection
+        - search_path += '#search'
         - if fret == this_fret
-          %a.finger-position{href:(@query.has_key?(string) ? chord.class.search_path(@query.reject { |k,v| k == string }) : chord.class.search_path(@query.merge(string => this_fret))), title: (@query.has_key?(string) ? 'remove' : 'add')}
+          %a.finger-position{href:search_path, title: (@query.has_key?(string) ? 'remove' : 'add')}
             .finger.chord{class: (@query.has_key?(string) ? 'queried' : '')}
               = chord.tone(string)
         - else
-          %a.hidden.finger-position{href:chord.class.search_path(@query.merge(string => this_fret)), title:'add'}
+          %a.hidden.finger-position{href:search_path, title:'add'}
             .finger
               = chord.tone(string, this_fret)
