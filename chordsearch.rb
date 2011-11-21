@@ -23,18 +23,15 @@ get %r{^/collection/([^/]+)/?$} do |collection|
   @collection = ChordCollection.find(collection)
 end
 
-get %r{^/(\w+)/$} do |instrument|
-  redirect '/' unless ChordDB[instrument]
-  @query = {}
-  @search_chord = ChordDB[instrument].new
-  @chords = []
-  @collection = collection
-  haml :chords
-end
-
 get %r{^/(\w+)/(.*\.json)$} do |instrument, q|
   query = ChordDB.query_from_param(q)
   ChordDB.find_chords(query, instrument).to_json
+end
+
+post %r{^/collection/([^/]+)/remove/(\d+)?$} do |collection, index|
+  @collection = ChordCollection.find(collection)
+  @collection.delete(index)
+  @collection.save
 end
 
 get %r{^/(\w+)/([^/]+)/add/([^/]+)/(.*)$} do |instrument, q, collection, chord_key|
@@ -42,6 +39,22 @@ get %r{^/(\w+)/([^/]+)/add/([^/]+)/(.*)$} do |instrument, q, collection, chord_k
   @collection << chord_key
   @collection.save
   redirect "/#{instrument}/#{q}?c=#{collection}"
+end
+
+get %r{^/(\w+)/([^/]+)/remove/([^/]+)/(.*)$} do |instrument, q, collection, chord_key|
+  @collection = ChordCollection.find(collection) || ChordCollection.new('name' => collection)
+  @collection << chord_key
+  @collection.save
+  redirect "/#{instrument}/#{q}?c=#{collection}"
+end
+
+get %r{^/(\w+)/$} do |instrument|
+  redirect '/' unless ChordDB[instrument]
+  @query = {}
+  @search_chord = ChordDB[instrument].new
+  @chords = []
+  @collection = collection
+  haml :chords
 end
 
 get %r{^/(\w+)/(.*)$} do |instrument, q|

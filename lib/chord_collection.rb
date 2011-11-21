@@ -24,6 +24,10 @@ class ChordCollection
     @chords << chord_key
   end
 
+  def remove(index)
+    @chords.delete_at(index)
+  end
+
   def chords
     @chords.map do |chord|
       instrument, chord_key = chord.split('/') # "guitar/E0A2D0g0b0e3--E_m7"
